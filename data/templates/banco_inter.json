@@ -1,0 +1,9 @@
+{
+    "nome": "Banco Inter",
+    "data_criacao": "06/10/2025 13:03:12",
+    "mapping": {
+        "data": "Data Lançamento",
+        "tipo": "Forma Pagamento",
+        "valor": "Valor Total"
+    }
+}

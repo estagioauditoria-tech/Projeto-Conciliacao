@@ -44,7 +44,7 @@ class Transaction:
 
         # Atributos
         self.data = data # Tipo: str
-        self.tipo = tipo_pagamento # Tipo: str
+        self.tipo_pagamento = tipo_pagamento # Tipo: str
         self.valor = valor # Tipo: float
         self.extras = extras # Tipo: dict
 

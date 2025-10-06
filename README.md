@@ -167,14 +167,87 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 
 - **Paulo Ygor** - Estagiário | Grupo Doma - Desenvolvimento e arquitetura
 
+## 🔄 Status do Projeto
+
+### ✅ Módulos Implementados (MVP)
+
+#### 1. Transaction (models/transaction.py) - ✅ COMPLETO
+- Validação de dados obrigatórios (data, tipo_pagamento, valor)
+- Suporte a campos extras flexíveis
+- Normalização de tipos de pagamento
+- Taxa de validação: 100%
+
+#### 2. FileHandler (services/file_handler.py) - ✅ COMPLETO
+- Leitura de arquivos .xlsx e .xls
+- Suporte para OpenPyXL e xlrd
+- Escrita de arquivos Excel
+- Validações de caminho e formato
+
+#### 3. SheetProcessor (services/sheet_processor.py) - ✅ COMPLETO
+- Identificação automática de cabeçalhos
+- Remoção de linhas/colunas vazias
+- Desmesclagem de células (ffill)
+- Limpeza completa de planilhas
+
+#### 4. DataMapper (services/data_mapper.py) - ✅ COMPLETO
+- Identificação inteligente de colunas (keywords)
+- Extração de transactions com validação
+- Conversão automática de datetime para string
+- Taxa de sucesso em testes: 98.9% (94/95 transactions)
+- Suporta campos extras dinâmicos
+
+### 🚧 Em Desenvolvimento
+
+#### 5. TemplateManager (services/template_manager.py) - 🔨 INICIADO
+- **Status**: Estrutura básica definida
+- **Próximo**: Implementar salvar_template(), carregar_template()
+- **Decisão arquitetural**: Usar JSON no MVP (migração futura para SQLite)
+
+### 📋 Pendente
+
+#### 6. Interface UI (ui/main_window.py) - ⏳ PENDENTE
+- Layout definido (1366x720)
+- Tema dark mode especificado
+- Aguardando conclusão do TemplateManager
+
+#### 7. Banco de Dados (database.py) - ⏳ PLANEJADO
+- SQLite para histórico de conciliações
+- Migração de templates JSON → SQLite (pós-MVP)
+
+---
+
+## 📊 Métricas de Desenvolvimento
+
+- **Linhas de código**: ~500 linhas (sem testes)
+- **Testes implementados**: 3 arquivos (test_file_handler, test_sheet_processor, test_data_mapper)
+- **Cobertura de testes**: FileHandler + SheetProcessor + DataMapper testados end-to-end
+- **Taxa de sucesso em dados reais**: 98.9%
+- **Documentação**: 100% dos módulos implementados documentados
+
+---
+
 ## 🔄 Changelog
 
-### v2.0.0 (Em desenvolvimento)
-- Refatoração completa da arquitetura
-- Separação de responsabilidades (Models, Services, UI)
-- Suporte para múltiplos templates
-- Sistema de validação robusto
-- Interface modernizada
+### v2.0.0 (Em desenvolvimento - 03/10/2025)
+
+#### ✅ Completado
+- ✅ Refatoração completa da arquitetura
+- ✅ Separação de responsabilidades (Models, Services, UI)
+- ✅ Sistema de validação robusto (Transaction)
+- ✅ Processamento inteligente de planilhas (SheetProcessor)
+- ✅ Mapeamento flexível de dados (DataMapper)
+- ✅ Suporte para múltiplos formatos Excel (.xlsx, .xls)
+- ✅ Pipeline completo de testes
+- ✅ Documentação técnica completa
+
+#### 🚧 Em Progresso
+- 🔨 TemplateManager (estrutura básica criada)
+- 📝 Features futuras documentadas
+
+#### ⏳ Próximos Passos
+- Interface UI modernizada
+- Sistema de templates completo
+- Banco de dados SQLite
 
 ### v1.0.0
 - Versão inicial

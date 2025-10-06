@@ -63,3 +63,8 @@ credentials.json
 # Arquivos de saída gerados
 output/
 generated/
+
+# Arquivos de teste gerados
+tests/output_teste.xlsx
+tests/*.xlsx
+tests/*.xls
