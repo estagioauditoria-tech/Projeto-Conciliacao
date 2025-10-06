@@ -103,7 +103,8 @@ src/conciliador/
 │   ├── file_handler.py          # Gerencia importação/exportação
 │   ├── sheet_processor.py       # Processa e limpa planilhas
 │   ├── data_mapper.py           # Mapeia dados para Transaction
-│   └── template_manager.py      # Gerencia templates de saída
+│   ├── template_manager.py      # Gerencia templates de mapeamento
+│   └── output_generator.py      # Gera planilhas formatadas
 │
 ├── ui/                          # CAMADA DE APRESENTAÇÃO
 │   ├── __init__.py
@@ -254,27 +255,69 @@ Lista de Transactions válidas + Lista de erros
 
 ### TemplateManager (services/template_manager.py)
 
-**Responsabilidade**: Gerar planilhas formatadas a partir de Transactions
+**Responsabilidade**: Gerenciar templates de mapeamento de colunas
+
+**O que é um Template de Mapeamento**:
+Um template armazena a configuração de como as colunas são identificadas em planilhas de uma fonte específica (ex: Banco Inter, Nubank). Permite reutilizar mapeamentos sem precisar identificar colunas novamente.
+
+**Estrutura do Template (JSON)**:
+```json
+{
+    "nome": "Banco Inter",
+    "data_criacao": "06/10/2025 14:30:45",
+    "mapping": {
+        "data": "Data Lançamento",
+        "tipo": "Forma Pagamento",
+        "valor": "Valor Total"
+    }
+}
+```
+
+**Funções**:
+- `save_template(nome: str, mapping: dict) -> str`: Salva um template em JSON
+- `load_template(nome: str) -> dict`: Carrega o mapping de um template salvo
+- `list_templates() -> list[str]`: Lista todos os templates disponíveis
+- `delete_template(nome: str) -> bool`: Remove um template
+
+**Localização**: Templates são salvos em `data/templates/` como arquivos `.json`
+
+### OutputGenerator (services/output_generator.py)
+
+**Responsabilidade**: Gerar planilhas formatadas a partir de Transactions e Templates
+
+**O que faz**:
+Orquestra a geração de planilhas Excel formatadas usando Templates de saída.
 
 **Processo**:
-
 ```
 Lista de Transactions + Template
     ↓
 1. Criar DataFrame vazio com colunas do template
 2. Para cada Transaction:
-    - Mapear campos usando template.mapeamento
+    - Usar template.get_valor_mapeado() para extrair valores
     - Adicionar linha ao DataFrame
-3. Aplicar formatação (cores, estilos)
-4. Exportar para Excel
+3. Aplicar formatação (cores, estilos do template)
+4. Exportar para Excel usando FileHandler
     ↓
 Arquivo Excel formatado
 ```
 
 **Funções**:
-- `gerar_planilha(transactions: list[Transaction], template: Template) -> str`
-- `aplicar_formatacao(wb: Workbook, template: Template)`
-- `carregar_template(nome: str) -> Template`
+- `gerar_planilha(transactions: list[Transaction], template: Template, caminho_saida: str) -> str`: Gera planilha formatada
+- `aplicar_formatacao(workbook, template: Template)`: Aplica estilos visuais ao Excel
+
+**Exemplo de uso**:
+```python
+# Criar template de saída
+template_omie = Template(
+    nome="Omie",
+    colunas=["Data", "Valor", "Tipo"],
+    mapeamento={"Data": "data", "Valor": "valor", "Tipo": "tipo_pagamento"}
+)
+
+# Gerar planilha formatada
+caminho = gerar_planilha(transactions, template_omie, "saida_omie.xlsx")
+```
 
 ---
 
@@ -343,7 +386,7 @@ Arquivo Excel formatado
 5. DataMapper.extrair_transactions(df)
    ↓ (cria Transactions, valida)
 
-6. TemplateManager.gerar_planilha(transactions, template)
+6. OutputGenerator.gerar_planilha(transactions, template)
    ↓ (gera Excel formatado)
 
 7. Database.registrar_historico(...)
