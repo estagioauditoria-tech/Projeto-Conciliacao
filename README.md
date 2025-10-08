@@ -103,7 +103,8 @@ conciliador-financeiro/
 │       │   ├── file_handler.py      # Importação/exportação
 │       │   ├── sheet_processor.py   # Processamento de planilhas
 │       │   ├── data_mapper.py       # Mapeamento de dados
-│       │   └── template_manager.py  # Gerenciamento de templates
+│       │   ├── template_manager.py  # Gerenciamento de templates
+│       │   └── output_generator.py  # Geração de planilhas formatadas
 │       ├── ui/                  # Interface gráfica
 │       │   ├── main_window.py   # Janela principal
 │       │   └── styles.py        # Estilos e temas
@@ -196,31 +197,52 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 - Taxa de sucesso em testes: 98.9% (94/95 transactions)
 - Suporta campos extras dinâmicos
 
+#### 5. TemplateManager (services/template_manager.py) - ✅ COMPLETO
+- Salvamento de templates de mapeamento em JSON
+- Carregamento de templates salvos
+- Listagem de todos os templates disponíveis
+- Exclusão de templates
+- 8 testes automatizados (100% de aprovação)
+- Armazenamento em `data/templates/`
+
+#### 6. Template (models/template.py) - ✅ COMPLETO
+- Modelo para definir formatos de saída (Omie, Custom, etc.)
+- Validações completas (nome, colunas, mapeamento, formatação)
+- Método to_dict() para serialização
+- Método get_valor_mapeado() para extração de valores
+- 11 testes automatizados (100% de aprovação)
+- Suporta campos obrigatórios e extras
+
+#### 7. OutputGenerator (services/output_generator.py) - ✅ COMPLETO
+- Função gerar_planilha() para geração de arquivos Excel formatados
+- Recebe lista de Transactions + Template e gera planilha no formato desejado
+- Validações completas (template, transactions, output_path)
+- Suporta campos obrigatórios e extras dinamicamente
+- 6 testes automatizados (100% de aprovação)
+- Teste end-to-end validando pipeline completo (importar → limpar → extrair → formatar → gerar)
+
 ### 🚧 Em Desenvolvimento
 
-#### 5. TemplateManager (services/template_manager.py) - 🔨 INICIADO
-- **Status**: Estrutura básica definida
-- **Próximo**: Implementar salvar_template(), carregar_template()
-- **Decisão arquitetural**: Usar JSON no MVP (migração futura para SQLite)
+#### 8. Interface UI (ui/main_window.py) - ⏳ EM DESENVOLVIMENTO
 
 ### 📋 Pendente
 
-#### 6. Interface UI (ui/main_window.py) - ⏳ PENDENTE
+#### 9. Banco de Dados (database.py) - ⏳ PLANEJADO
 - Layout definido (1366x720)
 - Tema dark mode especificado
-- Aguardando conclusão do TemplateManager
+- Todos os módulos core prontos para integração
 
-#### 7. Banco de Dados (database.py) - ⏳ PLANEJADO
 - SQLite para histórico de conciliações
-- Migração de templates JSON → SQLite (pós-MVP)
+- Migração de templates JSON → SQLite (futuro)
 
 ---
 
 ## 📊 Métricas de Desenvolvimento
 
-- **Linhas de código**: ~500 linhas (sem testes)
-- **Testes implementados**: 3 arquivos (test_file_handler, test_sheet_processor, test_data_mapper)
-- **Cobertura de testes**: FileHandler + SheetProcessor + DataMapper testados end-to-end
+- **Linhas de código**: ~900 linhas (sem testes)
+- **Testes implementados**: 7 arquivos (test_file_handler, test_sheet_processor, test_data_mapper, test_template_manager, test_template, test_output_generator, test_end_to_end)
+- **Total de testes**: 34 testes automatizados
+- **Cobertura de testes**: Pipeline completo testado end-to-end (100% dos módulos core)
 - **Taxa de sucesso em dados reais**: 98.9%
 - **Documentação**: 100% dos módulos implementados documentados
 
@@ -228,7 +250,7 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 
 ## 🔄 Changelog
 
-### v2.0.0 (Em desenvolvimento - 03/10/2025)
+### v2.0.0 (Em desenvolvimento - 06/10/2025)
 
 #### ✅ Completado
 - ✅ Refatoração completa da arquitetura
@@ -236,18 +258,20 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 - ✅ Sistema de validação robusto (Transaction)
 - ✅ Processamento inteligente de planilhas (SheetProcessor)
 - ✅ Mapeamento flexível de dados (DataMapper)
+- ✅ **TemplateManager completo** (save, load, list, delete)
+- ✅ **Template model completo** (to_dict, get_valor_mapeado)
+- ✅ **OutputGenerator completo** (gerar_planilha)
+- ✅ Sistema de templates de mapeamento em JSON
+- ✅ Sistema de templates de saída (Omie, Custom, etc.)
 - ✅ Suporte para múltiplos formatos Excel (.xlsx, .xls)
-- ✅ Pipeline completo de testes
+- ✅ Pipeline completo de testes (7 módulos, 34 testes, incluindo end-to-end)
 - ✅ Documentação técnica completa
-
-#### 🚧 Em Progresso
-- 🔨 TemplateManager (estrutura básica criada)
-- 📝 Features futuras documentadas
+- ✅ Teste end-to-end validando todo o fluxo
 
 #### ⏳ Próximos Passos
-- Interface UI modernizada
-- Sistema de templates completo
-- Banco de dados SQLite
+- Interface UI modernizada (ui/main_window.py)
+- Integração dos módulos core na UI
+- Banco de dados SQLite para histórico (futuro)
 
 ### v1.0.0
 - Versão inicial
