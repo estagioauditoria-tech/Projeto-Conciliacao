@@ -36,6 +36,11 @@ def write_file(df, file_path):
     if df.empty:
         raise ValueError("O DataFrame está vazio e não pode ser salvo.")
 
+    # Garante que o diretório de destino exista antes de salvar
+    dir_name = os.path.dirname(file_path)
+    if dir_name:
+        os.makedirs(dir_name, exist_ok=True)
+
     # Transforma o DataFrame em um arquivo Excel
     try:
         df.to_excel(file_path)

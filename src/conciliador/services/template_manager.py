@@ -17,107 +17,87 @@ def save_template(nome, mapping):
     '''
     Salva um template de mapeamento em um arquivo JSON.
     '''
-    # Validações 
 
-    # Validação 1 - nome
-    if not isinstance(nome, str):
-        raise TypeError("O nome do template deve ser uma string.")
-    if not nome.strip():
+    # Validações
+    if not isinstance(nome, str) or not nome.strip():
         raise ValueError("O nome do template não pode ser vazio.")
-    # Validação 2 - mapping
-    if not isinstance(mapping, dict):
-        raise TypeError("O mapeamento deve ser um dicionário.")
-    # Validação 3 - chaves do mapping
-    validate_keys = {"data", "tipo", "valor"}
-    for key in validate_keys:
-        if key not in mapping:
-            raise ValueError (f"A chave '{key}' é obrigatória no mapeamento.")
-            
-        # Cria o diretório se não existir
-    if not os.path.exists(TEMPLATE_DIR):
-        os.makedirs(TEMPLATE_DIR)
-    
-    # Salva o template
-    arquive_name = nome.replace(" ", "_").lower().strip()
-    template_path = os.path.join(TEMPLATE_DIR, f"{arquive_name}.json")
+    if not isinstance(mapping, dict) or not mapping:
+        raise ValueError("O mapeamento não pode ser um dicionário vazio.")
 
-    # Cria dicionário do template
+    # Garantir que o diretório de templates existe, se não, criar
+    os.makedirs(TEMPLATE_DIR, exist_ok=True)
+
+    # Padroniza o nome do arquivo para ser usado como nome de arquivo
+    file_name = nome.strip().lower().replace(" ", "_")
+    file_path = os.path.join(TEMPLATE_DIR, f"{file_name}.json")
+
+    # Estrutura de dados a ser salva, conforme a documentação
     template_data = {
         "nome": nome,
-        "data_criacao": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+        "data_criacao": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "mapping": mapping
     }
-    with open(template_path, "w", encoding="utf-8") as f:
-        json.dump(template_data, f, ensure_ascii=False, indent=4)
-    
-    return template_path
+
+    # Salva o arquivo JSON
+    with open(file_path, "w", encoding="utf-8") as file:
+        json.dump(template_data, file, indent=4, ensure_ascii=False)
+
+    return file_path
 
 def load_template(nome):
     '''
     Carrega um template de mapeamento de um arquivo JSON.
+    Retorna o dicionário do template ou None se não encontrado.
     '''
-    # Validações
-    if not isinstance(nome, str):
-        raise TypeError("O nome do template deve ser uma string.")
-    if not nome.strip():
-        raise ValueError("O nome do template não pode ser vazio.")
-     
-    # Padroniza
-    arquive_name = nome.replace(" ", "_").lower().strip()
-    template_path = os.path.join(TEMPLATE_DIR, f"{arquive_name}.json")
+    # Padroniza o nome do arquivo e carrega ele
+    file_name = nome.strip().lower().replace(" ", "_")
+    file_path = os.path.join(TEMPLATE_DIR, f"{file_name}.json")
 
     # Verifica se o arquivo existe
-    if not os.path.exists(template_path):
-        raise FileNotFoundError(f"O template '{nome}' não foi encontrado.")
-    
-    # Carrega o template
-    with open(template_path, "r", encoding="utf-8") as f:
-        template_data = json.load(f)
-    
-    return template_data["mapping"]
-
+    if os.path.exists(file_path):
+        try:
+            with open(file_path, "r", encoding="utf-8") as file:
+                return json.load(file)
+        except (json.JSONDecodeError, IOError):
+            return None # Retorna None se o arquivo estiver corrompido ou ilegível
+    else:
+        return None
 
 def list_templates():
     '''
     Lista todos os templates de mapeamento disponíveis.
+    Retorna uma lista com os nomes dos templates.
     '''
-    # Verifica se o diretório existe
+    # Verifica se o arquivo existe
     if not os.path.exists(TEMPLATE_DIR):
         return []
-    # Lista os arquivos JSON no diretório
-    archives = os.listdir(TEMPLATE_DIR)
+    
+    # Cria uma lista vazia para salvar a lista de templates
     templates = []
 
-    for archive in archives:
-        if archive.endswith(".json"):
-            nome = archive.replace(".json", "")
-            templates.append(nome)
-
-    return templates
-
-
+    # Itera sobre os arquivos no diretório
+    for filename in os.listdir(TEMPLATE_DIR):
+        if filename.endswith(".json"):
+            # Remove a extensão .json para obter o nome do template
+            template_name = filename[:-5].replace("_", " ").title()
+            templates.append(template_name)
+    
+    return sorted(templates)
 
 def delete_template(nome):
     '''
     Deleta um template de mapeamento.
+    Retorna True se o arquivo foi deletado, False caso contrário.
     '''
-
-    # Validações
-    if not isinstance(nome, str):
-        raise TypeError("O nome do template deve ser uma string.")
-    if not nome.strip():
-        raise ValueError("O nome do template não pode ser vazio.")
-    
-    # Padroniza
-    arquive_name = nome.replace(" ", "_").lower().strip()
-    template_path = os.path.join(TEMPLATE_DIR, f"{arquive_name}.json")
+    # Padroniza o nome dos arquivos e carrega eles
+    file_name = nome.strip().lower().replace(" ", "_")
+    file_path = os.path.join(TEMPLATE_DIR, f"{file_name}.json")
 
     # Verifica se o arquivo existe
-    if not os.path.exists(template_path):
-        raise FileNotFoundError(f"O template '{nome}' não foi encontrado.")
-    
-    # Deleta o arquivo
-    os.remove(template_path)
-    
-    return True
-
+    if os.path.exists(file_path):
+        try:
+            os.remove(file_path) # Deleta o arquivo
+            return True
+        except OSError:
+            return False
+    return False

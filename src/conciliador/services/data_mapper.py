@@ -65,7 +65,7 @@ Retorna (lista_sucessos, lista_erros).
     mapping = column_identifier(df)
     success_list = []
     error_list = []
-
+ 
         # Itera pelas linhas do DataFrame e cria objetos Transaction
     for index, row in df.iterrows():
         try: 

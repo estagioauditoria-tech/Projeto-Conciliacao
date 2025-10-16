@@ -61,6 +61,7 @@ Esta função chama as demais funções de limpeza em sequência para preparar a
     # Só redefine cabeçalho se encontrou um (header_index >= 0)
     if header_index >= 0:
         df.columns = df.iloc[header_index]  # Define a linha do cabeçalho
+        df.columns = df.columns.astype(str)  # Garante que todos os nomes de colunas sejam strings
         df = df[header_index + 1:]  # Remove linhas acima do cabeçalho
 
     df = remove_empty(df)  # Remove linhas e colunas vazias
